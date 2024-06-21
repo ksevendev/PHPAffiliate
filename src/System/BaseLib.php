@@ -1,8 +1,8 @@
 <?php
 
-    namespace KSeven\Affiliate\System;
+    namespace KSeven\PHPAffiliate\System;
 
-    use KSeven\Affiliate\System\Request;
+    use KSeven\PHPAffiliate\System\Request;
 
 	class BaseLib {
 

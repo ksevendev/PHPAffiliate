@@ -1,5 +1,5 @@
 <?php
-    namespace KSeven\Affiliate\Config;
+    namespace KSeven\PHPAffiliate\Config;
 
     class Affiliate
     {

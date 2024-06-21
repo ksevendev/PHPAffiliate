@@ -1,8 +1,8 @@
 <?php
 
-    namespace KSeven\Affiliate\System;
+    namespace KSeven\PHPAffiliate\System;
 
-    use KSeven\Affiliate\Config\Affiliate AS Config;
+    use KSeven\PHPAffiliate\Config\Affiliate AS Config;
 
     class Request {
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace KSeven\Affiliate;
+namespace KSeven\PHPAffiliate;
 
 
-use KSeven\Affiliate\System\BaseLib;
+use KSeven\PHPAffiliate\System\BaseLib;
 
 class Affiliate extends BaseLib
 {

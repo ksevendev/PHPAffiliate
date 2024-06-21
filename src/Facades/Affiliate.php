@@ -1,14 +1,14 @@
 <?php
 
-namespace KSeven\Affiliate;
+namespace KSeven\PHPAffiliate\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
  * Class Factory.
  *
- * @method static \KSeven\Affiliate   checkConnection()
- * @method static \KSeven\Affiliate   getProduct($id)
+ * @method static \KSeven\PHPAffiliate   checkConnection()
+ * @method static \KSeven\PHPAffiliate   getProduct($id)
  */
 class Affiliate extends Facade
 {
