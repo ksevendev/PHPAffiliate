@@ -2,7 +2,6 @@
 
 namespace KSeven\PHPAffiliate;
 
-
 use KSeven\PHPAffiliate\System\BaseLib;
 
 class Affiliate extends BaseLib

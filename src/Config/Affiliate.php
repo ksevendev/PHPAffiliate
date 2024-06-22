@@ -1,15 +1,19 @@
 <?php
     namespace KSeven\PHPAffiliate\Config;
 
-    class Affiliate
+    use CodeIgniter\Config\BaseConfig;
+
+    class Affiliate extends BaseConfig
     {
 
-        public string $URL = "https://affilia.test/api/";
+        public string $apiURL = "https://affilia.test/api/";
 
-        public string $KEY = "6LdPC88fAAAAAG5SVaRYDnV2NpCrptLg2XLYKRKC";
+        public string $apikey = "6LdPC88fAAAAAG5SVaRYDnV2NpCrptLg2XLYKRKC";
 
-        public bool $SSL = FALSE;
+        public bool $forceSecureRequests = false;
+        
+        public int $timeOut = 30;
 
-        public string $Version = "1.0.0";
+        public string $version = "1.0.0";
 
     }

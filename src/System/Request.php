@@ -1,90 +1,106 @@
 <?php
 
-    namespace KSeven\PHPAffiliate\System;
+namespace KSeven\PHPAffiliate\System;
 
-    use KSeven\PHPAffiliate\Config\Affiliate AS Config;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use KSeven\PHPAffiliate\Config\Affiliate as Config;
+use Config\App as AppConfig;
 
-    class Request {
+class Request
+{
 
-		protected $baseUrl;
+    protected $apiURL;
 
-		protected $key;
+    protected $apikey;
+    
+    protected $baseUrl;
 
-		protected $language;
+    protected $timeOut;
 
-		public function __construct()
-		{ 
-            $config = new Config();
-			$this->baseUrl = ($config->SSL ? 'http://' : 'http://') . $config->URL . '/';
-			$this->key = $config->KEY;
-		}
+    protected $client;
 
-        /**
-         * Send a request to the API
-         *
-         * @param string $url
-         * @param string $method
-         * @param array $data
-         * @param array $headers
-         * @return string
-         * @throws \Exception
-         */
-        private function sendRequest($url, $method = 'GET', $data = [], $headers = [])
-        {
-            $curl = curl_init();
-            $ApiUrl = $this->baseUrl . $url;
-            $defaultOptions = [
-                CURLOPT_URL => $ApiUrl,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            ];
-            $methodOptions = [];
-            if ($method === 'POST') {
-                $methodOptions = [
-                    CURLOPT_CUSTOMREQUEST => 'POST',
-                    CURLOPT_POSTFIELDS => $data,
-                ];
-            } elseif ($method === 'GET' && !empty($data)) {
-                $ApiUrl .= '?' . http_build_query($data);
-                $defaultOptions[CURLOPT_URL] = $ApiUrl;
-            }
-            $headerOptions = [];
-            if (!empty($headers)) {
-                $headerOptions = [
-                    CURLOPT_HTTPHEADER => $headers,
-                ];
-            }
-            curl_setopt_array($curl, $defaultOptions + $methodOptions + $headerOptions);
-            $response = curl_exec($curl);
+    public function __construct()
+    {
+        $Config = new Config();
+        $AppConfig = new AppConfig();
 
-            if (curl_errno($curl)) {
-                $error_msg = curl_error($curl);
-                curl_close($curl);
-                throw new \Exception('cURL error: ' . $error_msg);
-            }
-            curl_close($curl);
-            return $response;
-        }
+        $apiURL = env('affiliate.apiURL', $Config->apiURL);
+        $forceSecureRequests = env('affiliate.forceSecureRequests', $Config->forceSecureRequests);
+        $this->apiURL = ($forceSecureRequests ? 'https://' : 'http://') . rtrim($apiURL, '/') . '/';
 
-        /**
-         * Send a request post to the API
-         *
-         * @param string $url
-         * @param array $data
-         * @return string
-         * @throws \Exception
-         */
-        public function post($url, $data = [])
-        {
-            $postHeaders = [
-                'checkoutUrl: ' . base_url(),
-                'apikey: ' . $this->key,
-            ];
-            return $this->sendRequest($url, 'POST', $data, $postHeaders);
-        }
+        $apikey = env('affiliate.apikey', $Config->apikey);
+        $this->apikey = $apikey;
 
+        $baseURL = env('app.baseURL', $AppConfig->baseURL);
+        $this->baseUrl = $baseURL;
+        
+        $timeOut = env('affiliate.timeOut', $Config->timeOut);
+        $this->timeOut = $timeOut;
+
+        $this->client = new Client([
+            'base_uri' => $this->baseUrl,
+            'timeout'  => $this->timeOut,
+            'headers' => [
+                'apikey' => $this->apikey,
+                'checkoutUrl' => $this->baseUrl,
+            ],
+            'verify' => $forceSecureRequests, // Desativa a verificação de SSL
+        ]);
     }
+
+    /**
+     * Send a POST request to the API
+     *
+     * @param string $endpoint
+     * @param array $data
+     * @param array $headers
+     * @return string
+     * @throws \Exception
+     */
+    public function post(string $endpoint, array $data = [], array $headers = [])
+    {
+        try {
+            $response = $this->client->post($endpoint, [
+                'form_params' => $data,
+                'headers' => array_merge($this->client->getConfig('headers'), $headers),
+            ]);
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            throw new \Exception('Guzzle error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Send a GET request to the API
+     *
+     * @param string $endpoint
+     * @param array $params
+     * @param array $headers
+     * @return string
+     * @throws \Exception
+     */
+    public function get(string $endpoint, array $params = [], array $headers = [])
+    {
+        try {
+            $response = $this->client->get($endpoint, [
+                'query' => $params,
+                'headers' => array_merge($this->client->getConfig('headers'), $headers),
+            ]);
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            throw new \Exception('Guzzle error: ' . $e->getMessage());
+        }
+    }
+
+    public function getIP()
+    {
+        try {
+            $response = $this->client->get('http://ipecho.net/plain');
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            throw new \Exception('Guzzle error: ' . $e->getMessage());
+        }
+    }
+}
+
