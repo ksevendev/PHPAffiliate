@@ -1,9 +1,9 @@
 <?php
 
-namespace PHPAffiliate\Libraries;
+namespace Affiliate\Libraries;
 
 use Config\App as AppConfig;
-use PHPAffiliate\Config\Affiliate as Config;
+use Affiliate\Config\Affiliate as Config;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
 

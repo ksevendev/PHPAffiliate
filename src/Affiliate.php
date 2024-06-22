@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPAffiliate;
+namespace Affiliate;
 
-use PHPAffiliate\Libraries\BaseLib;
+use Affiliate\Libraries\BaseLib;
 
 class Affiliate extends BaseLib
 {

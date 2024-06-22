@@ -1,8 +1,8 @@
 <?php
 
-    namespace PHPAffiliate\Libraries;
+    namespace Affiliate\Libraries;
 
-	use PHPAffiliate\Libraries\Request;
+	use Affiliate\Libraries\Request;
 
 	class BaseLib {
 
