@@ -1,5 +1,5 @@
 <?php
-    namespace KSeven\PHPAffiliate\Config;
+    namespace PHPAffiliate\Config;
 
     use CodeIgniter\Config\BaseConfig;
 

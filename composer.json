@@ -18,7 +18,7 @@
     },
     "autoload": {
         "psr-4": {
-            "KSeven\\PHPAffiliate\\": "src/"
+            "PHPAffiliate\\": "src/"
         }
     }
 }

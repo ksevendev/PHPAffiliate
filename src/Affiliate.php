@@ -1,14 +1,16 @@
 <?php
 
-namespace KSeven\PHPAffiliate;
+namespace PHPAffiliate;
 
-use KSeven\PHPAffiliate\System\BaseLib;
+use PHPAffiliate\Libraries\BaseLib;
 
 class Affiliate extends BaseLib
 {
 
     public function __construct()
-    {}
+    {
+        parent::__construct();
+    }
 
     public function checkConnection()
     {
