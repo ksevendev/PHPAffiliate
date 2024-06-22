@@ -2,24 +2,14 @@
 
 namespace Affiliate;
 
-use Affiliate\Libraries\BaseLib;
+use Affiliate\Libraries\Affiliate AS BaseAffiliate;
 
-class Affiliate extends BaseLib
+class Affiliate extends BaseAffiliate
 {
 
     public function __construct()
     {
         parent::__construct();
-    }
-
-    public function checkConnection()
-    {
-        return $this->check_connection();
-    }
-
-    public function getProduct($id)
-    {
-        return $this->getProduct($id);
     }
 
 }

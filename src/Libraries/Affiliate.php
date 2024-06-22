@@ -7,8 +7,10 @@ use Affiliate\Config\Affiliate as Config;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
 
-class Request
+class Affiliate
 {
+
+    protected $config;
 
     protected $apiURL;
 
@@ -27,26 +29,61 @@ class Request
 
         $apiURL = env('affiliate.apiURL', $Config->apiURL);
         $forceSecureRequests = env('affiliate.forceSecureRequests', $Config->forceSecureRequests);
-        $this->apiURL = ($forceSecureRequests ? 'https://' : 'http://') . rtrim($apiURL, '/') . '/';
+
+        $setHttp = $forceSecureRequests ? 'https://' : 'http://';
+
+        $this->apiURL = $setHttp . rtrim($apiURL, '/') . '/api/';
 
         $apikey = env('affiliate.apikey', $Config->apikey);
         $this->apikey = $apikey;
 
         $baseURL = env('app.baseURL', $AppConfig->baseURL);
+        $baseURL = rtrim(str_replace(['https://', 'http://'], '', $baseURL), '/');
         $this->baseUrl = $baseURL;
         
         $timeOut = env('affiliate.timeOut', $Config->timeOut);
         $this->timeOut = $timeOut;
-
-        $this->client = new Client([
-            'base_uri' => $this->baseUrl,
+        
+        $this->config = [
+            'base_uri' => $this->apiURL,
             'timeout'  => $this->timeOut,
             'headers' => [
-                'apikey' => $this->apikey,
                 'checkoutUrl' => $this->baseUrl,
+                'apikey' => $this->apikey,
             ],
             'verify' => $forceSecureRequests, // Desativa a verificação de SSL
+        ];
+
+        $this->client = new Client($this->config);
+    }
+
+    public function checkConnection()
+    {
+        return $this->post('checkout/connection');
+    }
+
+    public function getProduct($id)
+    {
+        $response = $this->post('checkout/product', [
+            "id" => $id
         ]);
+        return $response;
+    }
+
+    /**
+     * get ip
+     *
+     * @return string
+     * @throws \Exception
+     */
+    public function getIP()
+    {
+        try {
+            $response = $this->client->get('http://ipecho.net/plain');
+            return $response->getBody()->getContents();
+        } catch (RequestException $e) {
+            throw new \Exception('Guzzle error: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -87,16 +124,6 @@ class Request
                 'query' => $params,
                 'headers' => array_merge($this->client->getConfig('headers'), $headers),
             ]);
-            return $response->getBody()->getContents();
-        } catch (RequestException $e) {
-            throw new \Exception('Guzzle error: ' . $e->getMessage());
-        }
-    }
-
-    public function getIP()
-    {
-        try {
-            $response = $this->client->get('http://ipecho.net/plain');
             return $response->getBody()->getContents();
         } catch (RequestException $e) {
             throw new \Exception('Guzzle error: ' . $e->getMessage());
