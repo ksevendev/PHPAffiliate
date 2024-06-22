@@ -2,8 +2,8 @@
 
 namespace Affiliate\Libraries;
 
-use Config\App as AppConfig;
 use Affiliate\Config\Affiliate as Config;
+use Config\App as AppConfig;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Client;
 
